@@ -1,5 +1,5 @@
 import React from 'react';
-import { AITool } from '../data/tools';
+import { AITool } from '../types';
 
 interface SchemaProps {
   tool: AITool;
@@ -16,15 +16,25 @@ export const ToolSchema: React.FC<SchemaProps> = ({ tool, language }) => {
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": tool.rating,
-      "reviewCount": tool.reviewCount
+      "reviewCount": tool.reviewCount,
+      "bestRating": "5",
+      "worstRating": "1"
     },
     "offers": {
       "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
+      "price": tool.pricing?.[language] === "Free" || tool.pricing?.[language] === "Miễn phí" ? "0" : undefined,
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
     },
-    "description": tool.description[language],
-    "image": tool.logo
+    "description": tool.description?.[language] || "",
+    "image": tool.logo,
+    "url": `https://auraai.vn/tool/${tool.slug || tool.domain}`,
+    "author": {
+      "@type": "Organization",
+      "name": "Aura AI"
+    },
+    "featureList": tool.features?.[language]?.join(", "),
+    "screenshot": tool.screenshots?.[0]
   };
 
   return (
