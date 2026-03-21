@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
   Globe, 
@@ -63,10 +63,10 @@ const Navbar = () => {
     )}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-transform">
-            <Zap className="text-black fill-black" size={24} />
+          <div className="w-7 h-7 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center group-hover:border-emerald-500/50 transition-all">
+            <Zap className="text-emerald-400 fill-emerald-400/20" size={14} />
           </div>
-          <span className="text-2xl font-bold tracking-tighter text-white">AURA<span className="text-emerald-500">AI</span></span>
+          <span className="text-lg font-light tracking-[0.2em] text-white uppercase">Aura <span className="text-emerald-400">AI</span></span>
         </Link>
 
         <div className="hidden md:flex items-center gap-2 glass-nav">
@@ -140,6 +140,7 @@ const Navbar = () => {
 
 const ToolCard = ({ tool }: { tool: AITool }) => {
   const { language, t } = useLanguage();
+  const navigate = useNavigate();
   
   const isHot = tool.rating >= 4.8;
   const isBestChoice = tool.reviewCount > 500 && tool.rating >= 4.7;
@@ -148,20 +149,24 @@ const ToolCard = ({ tool }: { tool: AITool }) => {
     const cat = category.toLowerCase();
     switch (cat) {
       case 'coding':
-        return 'bg-blue-500/10 text-blue-400 border-blue-400/20';
+        return 'bg-blue-500/5 text-blue-400/80 border-blue-400/10';
       case 'video':
-        return 'bg-purple-500/10 text-purple-400 border-purple-400/20';
+        return 'bg-purple-500/5 text-purple-400/80 border-purple-400/10';
       case 'writing':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-400/20';
+        return 'bg-emerald-500/5 text-emerald-400/80 border-emerald-400/10';
       case 'image':
-        return 'bg-rose-500/10 text-rose-400 border-rose-400/20';
+        return 'bg-rose-500/5 text-rose-400/80 border-rose-400/10';
       case 'audio':
-        return 'bg-amber-500/10 text-amber-400 border-amber-400/20';
+        return 'bg-amber-500/5 text-amber-400/80 border-amber-400/10';
       case 'productivity':
-        return 'bg-indigo-500/10 text-indigo-400 border-indigo-400/20';
+        return 'bg-indigo-500/5 text-indigo-400/80 border-indigo-400/10';
       default:
-        return 'bg-white/5 text-white/50 border-white/10';
+        return 'bg-white/5 text-white/30 border-white/5';
     }
+  };
+
+  const handleCardClick = () => {
+    navigate(`/tool/${tool.slug || tool.domain}`);
   };
 
   return (
@@ -173,67 +178,72 @@ const ToolCard = ({ tool }: { tool: AITool }) => {
         scale: 1.02,
         transition: { duration: 0.2 }
       }}
-      className="group relative flex flex-col h-full bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden transition-all duration-300 hover:border-emerald-500/40 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)]"
+      onClick={handleCardClick}
+      className="group relative flex flex-col h-full bg-white/[0.03] backdrop-blur-md border border-white/5 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-emerald-500/20 hover:shadow-[0_0_40px_rgba(16,185,129,0.03)] cursor-pointer"
     >
       {/* Badges */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-1.5 items-end">
+      <div className="absolute top-3 right-3 md:top-4 md:right-4 z-10 flex flex-col gap-1 items-end">
         {isHot && (
-          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-950/40 text-emerald-400 text-[9px] font-bold border border-emerald-400/20 uppercase tracking-wider backdrop-blur-md">
-            <Flame size={12} className="fill-emerald-400/50" />
+          <div className="flex items-center gap-1 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-emerald-950/20 text-emerald-400 text-[8px] md:text-[9px] font-semibold border border-emerald-400/5 uppercase tracking-wider backdrop-blur-sm">
+            <Flame size={10} className="fill-emerald-400/30" />
             Trending
           </div>
         )}
         {isBestChoice && (
-          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-950/40 text-amber-400 text-[9px] font-bold border border-amber-400/20 uppercase tracking-wider backdrop-blur-md">
-            <Trophy size={12} className="fill-amber-400/50" />
+          <div className="flex items-center gap-1 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-amber-950/20 text-amber-400 text-[8px] md:text-[9px] font-semibold border border-amber-400/5 uppercase tracking-wider backdrop-blur-sm">
+            <Trophy size={10} className="fill-amber-400/30" />
             Best Choice
           </div>
         )}
       </div>
 
-      <div className="p-7 flex-1">
-        <div className="flex items-start justify-between mb-6">
-          <div className="w-18 h-18 rounded-2xl bg-white/10 p-3 flex items-center justify-center overflow-hidden border border-white/20 shadow-2xl group-hover:scale-110 transition-transform duration-500 group-hover:border-emerald-400/50">
-            <LogoWithFallback tool={tool} className="w-full h-full object-contain filter drop-shadow-md" />
+      <div className="p-4 md:p-8 flex-1">
+        <div className="flex items-start justify-between mb-4 md:mb-8">
+          <div className="w-12 h-12 md:w-20 md:h-20 rounded-xl md:rounded-3xl bg-white/5 p-2 md:p-4 flex items-center justify-center overflow-hidden border border-white/5 shadow-xl group-hover:scale-105 transition-transform duration-700">
+            <LogoWithFallback tool={tool} className="w-full h-full object-contain filter drop-shadow-sm" />
           </div>
-          <div className="flex items-center gap-1.5 bg-emerald-400/20 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-black border border-emerald-400/30 shadow-[0_0_15px_rgba(52,211,153,0.15)]">
-            <Star size={14} className="fill-emerald-400" />
+          <div className="flex items-center gap-1 bg-emerald-400/5 text-emerald-400 px-2 py-1 rounded-full text-[10px] font-semibold border border-emerald-400/5">
+            <Star size={12} className="fill-emerald-400" />
             {tool.rating}
           </div>
         </div>
         
-        <h3 className="text-2xl font-black text-slate-50 mb-3 group-hover:text-emerald-400 transition-colors tracking-tight leading-none">{tool.name}</h3>
-        <p className="text-[15px] text-slate-300 line-clamp-3 mb-8 leading-relaxed font-medium opacity-90">
+        <h3 className="text-lg md:text-2xl font-semibold text-slate-100 mb-1 group-hover:text-emerald-400 transition-colors tracking-tight leading-none">{tool.name}</h3>
+        
+        {/* Tagline */}
+        <p className="text-[11px] md:text-[13px] text-slate-400 italic mb-4 opacity-60 line-clamp-1 font-light">
+          {tool.description?.[language]?.split('.')[0]?.trim() || ''}
+        </p>
+
+        <p className="hidden md:block text-[14px] text-slate-500 line-clamp-2 mb-8 leading-relaxed font-light opacity-60">
           {tool.description?.[language]}
         </p>
         
-        <div className="flex flex-wrap gap-2.5 mt-auto">
-          <span className={cn(
-            "px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300",
-            getCategoryStyles(tool.category)
-          )}>
-            {tool.category}
-          </span>
-          <span className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 group-hover:text-white transition-colors">
+        <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
+            <span className={cn(
+              "px-2 py-0.5 md:px-4 md:py-1.5 rounded-full border text-[8px] md:text-[10px] font-light uppercase tracking-wider transition-all duration-300",
+              getCategoryStyles(tool.category)
+            )}>
+              {tool.category}
+            </span>
+          </div>
+          <span className="px-2 py-0.5 md:px-3 md:py-1 rounded-lg bg-white/5 border border-white/5 text-[8px] md:text-[9px] font-semibold uppercase tracking-widest text-slate-500">
             {tool.pricing?.[language]}
           </span>
         </div>
       </div>
       
-      <div className="p-6 bg-white/[0.03] border-t border-white/10 flex gap-4">
-        <Link 
-          to={`/tool/${tool.slug || tool.domain}`}
-          className="flex-1 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white text-[13px] font-black text-center transition-all duration-300 border border-white/10 hover:border-emerald-400/30 uppercase tracking-widest"
-        >
-          {t.blog.readMore}
-        </Link>
+      <div className="p-4 md:p-6 bg-white/[0.01] border-t border-white/5 flex gap-2 md:gap-4">
         <a 
           href={tool.affiliateUrl} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black text-[13px] font-black transition-all duration-300 flex items-center justify-center shadow-[0_10px_20px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.5)] hover:-translate-y-1"
+          onClick={(e) => e.stopPropagation()}
+          className="w-full py-2.5 md:py-4 rounded-xl md:rounded-2xl bg-emerald-500/80 hover:bg-emerald-500 text-black text-[11px] md:text-[14px] font-bold transition-all duration-500 flex items-center justify-center shadow-[0_5px_15px_rgba(16,185,129,0.1)] hover:shadow-[0_10px_30px_rgba(16,185,129,0.3)]"
         >
-          <ExternalLink size={18} strokeWidth={3} />
+          <span className="mr-2 hidden md:inline">Visit Website</span>
+          <ExternalLink size={16} strokeWidth={2.5} />
         </a>
       </div>
     </motion.div>
@@ -242,32 +252,35 @@ const ToolCard = ({ tool }: { tool: AITool }) => {
 
 const CompactToolCard = ({ tool, isHot }: { tool: AITool, isHot?: boolean }) => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   
+  const handleCardClick = () => {
+    navigate(`/tool/${tool.slug || tool.domain}`);
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group bg-zinc-900/30 border border-white/5 rounded-xl p-4 hover:border-emerald-500/30 transition-all flex items-center gap-4 relative"
+      onClick={handleCardClick}
+      className="group bg-white/[0.04] backdrop-blur-2xl border border-white/5 rounded-2xl p-4 hover:border-emerald-500/30 transition-all flex items-center gap-4 relative cursor-pointer"
     >
       {isHot && (
-        <div className="absolute -top-2 -right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white text-[8px] font-black shadow-lg z-10">
-          <Flame size={10} className="fill-white" />
-          HOT
+        <div className="absolute -top-1 -right-1 flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/30 text-emerald-400 text-[8px] font-bold border border-emerald-400/10 uppercase tracking-wider backdrop-blur-md z-10">
+          <Flame size={10} className="fill-emerald-400/50" />
+          Trending
         </div>
       )}
-      <div className="w-12 h-12 rounded-lg bg-white/5 p-2 flex items-center justify-center shrink-0 border border-white/10">
-        <LogoWithFallback tool={tool} className="w-full h-full object-contain" />
+      <div className="w-12 h-12 rounded-xl bg-white/5 p-2 flex items-center justify-center shrink-0 border border-white/5">
+        <LogoWithFallback tool={tool} className="w-full h-full object-contain filter drop-shadow-sm" />
       </div>
       <div className="flex-1 min-w-0">
-        <h4 className="font-bold text-white truncate group-hover:text-emerald-400 transition-colors">{tool.name}</h4>
-        <p className="text-[10px] text-white/40 uppercase tracking-widest">{tool.category}</p>
+        <h4 className="font-medium text-slate-50 truncate group-hover:text-emerald-400 transition-colors">{tool.name}</h4>
+        <p className="text-[10px] text-slate-400 font-light uppercase tracking-wider">{tool.category}</p>
       </div>
-      <Link 
-        to={`/tool/${tool.slug || tool.domain}`}
-        className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:bg-emerald-500 hover:text-black transition-all"
-      >
+      <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-500 group-hover:bg-emerald-500 group-hover:text-black transition-all">
         <ArrowRight size={14} />
-      </Link>
+      </div>
     </motion.div>
   );
 };
@@ -386,8 +399,8 @@ const DirectoryPage = () => {
 
     return list.filter(tool => {
       const matchesSearch = tool.name.toLowerCase().includes(search.toLowerCase()) || 
-                           tool.description.en.toLowerCase().includes(search.toLowerCase()) ||
-                           tool.description.vi.toLowerCase().includes(search.toLowerCase());
+                           tool.description?.en?.toLowerCase()?.includes(search.toLowerCase()) ||
+                           tool.description?.vi?.toLowerCase()?.includes(search.toLowerCase());
       const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
@@ -438,38 +451,40 @@ const DirectoryPage = () => {
       </div>
 
       {/* Sticky Header for Search & Filter */}
-      <div className="sticky top-24 z-40 mb-16 space-y-6 py-6 bg-black/40 backdrop-blur-3xl -mx-6 px-6 border-b border-white/5">
+      <div className="md:sticky md:top-24 z-40 mb-12 md:mb-20 space-y-4 md:space-y-8 py-4 md:py-8 bg-black/40 backdrop-blur-md -mx-6 px-6 border-b border-white/5">
         {/* Search Bar */}
         <div className="max-w-2xl mx-auto relative group">
-          <div className="absolute inset-0 bg-emerald-500/10 blur-2xl group-focus-within:bg-emerald-500/20 transition-all rounded-3xl" />
-          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl p-1.5 shadow-2xl backdrop-blur-md focus-within:border-emerald-500/50 transition-all">
-            <Search className="ml-4 text-white/30" size={20} />
+          <div className="hidden md:block absolute inset-0 bg-emerald-500/5 blur-3xl group-focus-within:bg-emerald-500/10 transition-all rounded-3xl" />
+          <div className="relative flex items-center bg-white/5 border border-white/5 rounded-2xl p-1 md:p-1.5 shadow-2xl backdrop-blur-md focus-within:border-emerald-500/20 transition-all">
+            <Search className="ml-3 md:ml-4 text-white/10" size={16} />
             <input 
               type="text" 
               placeholder={t.nav.searchPlaceholder}
-              className="flex-1 bg-transparent border-none outline-none text-white px-4 py-3 placeholder:text-white/20 font-medium"
+              className="flex-1 bg-transparent border-none outline-none text-white px-3 md:px-4 py-2 md:py-4 placeholder:text-white/5 font-light text-sm md:text-base"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Categories */}
-        <div className="flex flex-wrap justify-center gap-2">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={cn(
-                "px-5 py-2 rounded-full text-xs font-black transition-all border uppercase tracking-widest",
-                activeCategory === cat 
-                  ? "bg-emerald-500 border-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)] scale-105" 
-                  : "bg-white/5 border-white/10 text-white/40 hover:border-white/30 hover:text-white"
-              )}
-            >
-              {t.categories[cat as keyof typeof t.categories]}
-            </button>
-          ))}
+        {/* Categories - Horizontal Scroll on Mobile */}
+        <div className="flex items-center justify-center">
+          <div className="flex overflow-x-auto no-scrollbar pb-2 md:pb-0 gap-2 md:gap-3 max-w-full md:flex-wrap md:justify-center px-4 md:px-0">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={cn(
+                  "whitespace-nowrap px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-semibold transition-all border uppercase tracking-widest shrink-0",
+                  activeCategory === cat 
+                    ? "bg-emerald-500 text-black border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.1)] scale-105" 
+                    : "bg-white/5 border-white/5 text-white/20 hover:border-white/10 hover:text-white"
+                )}
+              >
+                {t.categories[cat as keyof typeof t.categories]}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -516,7 +531,7 @@ const DirectoryPage = () => {
           }
           className="overflow-visible"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-10 items-start">
             <AnimatePresence mode="popLayout">
               {displayedTools.map(tool => (
                 <ToolCard key={tool.id} tool={tool} />
@@ -588,11 +603,28 @@ const StepCard = ({ step, index, language }: { step: string, index: number, lang
 
 const LogoWithFallback = ({ tool, className }: { tool: AITool, className?: string }) => {
   const [imgError, setImgError] = useState(false);
-  const [useClearbit, setUseClearbit] = useState(false);
   
-  if (imgError && useClearbit) {
+  // Generate a soft pastel gradient based on the tool name
+  const getGradient = (name: string) => {
+    const colors = [
+      'from-blue-400/20 to-indigo-400/20',
+      'from-emerald-400/20 to-teal-400/20',
+      'from-purple-400/20 to-pink-400/20',
+      'from-amber-400/20 to-orange-400/20',
+      'from-rose-400/20 to-red-400/20',
+      'from-cyan-400/20 to-blue-400/20'
+    ];
+    const index = name.length % colors.length;
+    return colors[index];
+  };
+
+  if (imgError || !tool.logo) {
     return (
-      <div className={cn("flex items-center justify-center bg-emerald-500/20 text-emerald-500 font-bold", className)}>
+      <div className={cn(
+        "flex items-center justify-center bg-gradient-to-br font-semibold text-white/70 uppercase tracking-tighter",
+        getGradient(tool.name),
+        className
+      )}>
         {tool.name.charAt(0)}
       </div>
     );
@@ -600,18 +632,12 @@ const LogoWithFallback = ({ tool, className }: { tool: AITool, className?: strin
 
   return (
     <img 
-      src={imgError ? `https://logo.clearbit.com/${tool.domain}` : tool.logo} 
+      src={tool.logo} 
       alt={tool.name} 
       className={className} 
       referrerPolicy="no-referrer" 
       loading="lazy"
-      onError={() => {
-        if (!imgError) {
-          setImgError(true);
-        } else {
-          setUseClearbit(true);
-        }
-      }}
+      onError={() => setImgError(true)}
     />
   );
 };
@@ -673,9 +699,10 @@ const ToolDetailPage = () => {
 
   useEffect(() => {
     if (tool && tool.description) {
-      document.title = `${tool.name} - ${tool.description[language]?.slice(0, 60)}... | Aura AI`;
+      const desc = tool.description[language] || '';
+      document.title = `${tool.name} - ${desc.slice(0, 60)}... | Aura AI`;
       const metaDescription = document.querySelector('meta[name="description"]');
-      const content = tool.description[language];
+      const content = desc;
       if (metaDescription) {
         metaDescription.setAttribute('content', content);
       } else {
